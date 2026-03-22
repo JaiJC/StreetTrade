@@ -1,4 +1,5 @@
-import { Camera, Smartphone, Sparkles, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { Business } from '../data/types';
 
 interface BusinessCardProps {
@@ -7,80 +8,81 @@ interface BusinessCardProps {
   onClick: () => void;
 }
 
-const sourceConfig = {
-  street_view: { icon: Camera, label: 'Street View' },
-  social_media: { icon: Smartphone, label: 'Social Media' },
-  both: { icon: Sparkles, label: 'Multi-Source' },
-} as const;
+const sourceTagStyles: Record<string, { bg: string; text: string; label: string }> = {
+  street_view: { bg: 'bg-teal-500/20', text: 'text-teal-400', label: 'Street View' },
+  social_media: { bg: 'bg-pink-500/20', text: 'text-pink-400', label: 'Inst' },
+  both: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Registry' },
+};
 
 export default function BusinessCard({ business, isSelected, onClick }: BusinessCardProps) {
-  const { icon: SourceIcon, label: sourceLabel } = sourceConfig[business.source];
+  const navigate = useNavigate();
   const confidencePct = Math.round(business.confidence * 100);
+  const sourceTag = sourceTagStyles[business.source];
+
+  const handleClick = () => {
+    onClick();
+    navigate(`/business/${business.id}`);
+  };
+
+  // Build source tags array for multi-source display
+  const tags: { bg: string; text: string; label: string }[] = [];
+  if (business.source === 'both') {
+    tags.push(sourceTagStyles.street_view);
+    tags.push(sourceTagStyles.both);
+    tags.push(sourceTagStyles.social_media);
+  } else {
+    tags.push(sourceTag);
+  }
 
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className={`w-full text-left p-4 rounded-xl border transition-all duration-200 group cursor-pointer ${
         isSelected
-          ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10'
-          : 'bg-surface-light border-surface-lighter hover:border-gray-500 hover:shadow-md hover:shadow-black/20'
+          ? 'bg-[#0f1724] border-[#e88c0a] shadow-lg shadow-[#e88c0a]/10'
+          : 'bg-[#0f1724] border-[#1e2a3a] hover:border-[#2a3a4a]'
       }`}
     >
-      {/* Top row: name + exclusive badge */}
-      <div className="flex items-start justify-between gap-2 mb-1.5">
-        <h3
-          className={`font-semibold text-sm leading-tight ${
-            isSelected ? 'text-primary-light' : 'text-white group-hover:text-primary-light'
-          } transition-colors`}
-        >
+      {/* Row 1: Name + Confidence % */}
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <h3 className="font-bold text-sm text-white leading-tight">
           {business.name}
         </h3>
-        {!business.onGoogle ? (
-          <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] font-semibold uppercase tracking-wide">
-            Exclusive
-          </span>
-        ) : (
-          <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-gray-700/50 text-gray-400 text-[10px] font-medium">
-            On Google
-          </span>
-        )}
+        <span className="shrink-0 text-sm font-bold text-[#e88c0a]">
+          {confidencePct}%
+        </span>
       </div>
 
-      {/* Category */}
-      <p className="text-xs text-gray-400 capitalize mb-2">{business.category}</p>
+      {/* Row 2: Description */}
+      <p className="text-xs text-gray-500 leading-relaxed mb-2.5 line-clamp-2">
+        {business.description}
+      </p>
 
-      {/* Address */}
+      {/* Row 3: Source tags */}
+      <div className="flex items-center gap-1.5 mb-2.5">
+        {tags.map((tag) => (
+          <span
+            key={tag.label}
+            className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${tag.bg} ${tag.text}`}
+          >
+            {tag.label}
+          </span>
+        ))}
+      </div>
+
+      {/* Row 4: Address + distance */}
       <div className="flex items-center gap-1.5 mb-3">
         <MapPin className="w-3 h-3 text-gray-500 shrink-0" />
         <p className="text-xs text-gray-500 truncate">{business.address}</p>
+        <span className="text-xs text-gray-600 shrink-0 ml-auto">0.3 km</span>
       </div>
 
-      {/* Bottom row: confidence bar + source */}
-      <div className="flex items-center gap-3">
-        {/* Confidence bar */}
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
-              Confidence
-            </span>
-            <span className="text-[10px] font-semibold text-primary">{confidencePct}%</span>
-          </div>
-          <div className="h-1.5 w-full bg-surface-lighter rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                width: `${confidencePct}%`,
-                background: `linear-gradient(90deg, #059669, #10b981, #34d399)`,
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Source badge */}
-        <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-surface-lighter text-gray-400">
-          <SourceIcon className="w-3 h-3" />
-          <span className="text-[10px] font-medium whitespace-nowrap">{sourceLabel}</span>
-        </div>
+      {/* Row 5: Confidence progress bar */}
+      <div className="h-1 w-full bg-[#1a2332] rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500 bg-[#e88c0a]"
+          style={{ width: `${confidencePct}%` }}
+        />
       </div>
     </button>
   );

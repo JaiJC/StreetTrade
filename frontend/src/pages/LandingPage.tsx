@@ -1,188 +1,213 @@
-import { Link } from 'react-router-dom';
-import {
-  ScanEye,
-  BrainCircuit,
-  DatabaseZap,
-  ListChecks,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react';
-import StatsBar from '../components/StatsBar';
-
-const steps = [
-  {
-    icon: <ScanEye size={28} />,
-    title: 'Street View Scan',
-    description:
-      'We crawl Google Street View imagery to detect storefronts, signs, and physical businesses that exist in the real world.',
-  },
-  {
-    icon: <BrainCircuit size={28} />,
-    title: 'AI Analysis',
-    description:
-      'Our vision models extract business names, categories, and operating signals from storefront imagery with high accuracy.',
-  },
-  {
-    icon: <DatabaseZap size={28} />,
-    title: 'Cross-Reference',
-    description:
-      'We compare detected businesses against Google Maps, Yelp, and other directories to find the ones that are completely missing.',
-  },
-  {
-    icon: <ListChecks size={28} />,
-    title: 'Verified Results',
-    description:
-      'Browse a curated map of invisible businesses with confidence scores, location data, and category tags ready for outreach.',
-  },
-];
+import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Sparkles, ChevronDown } from 'lucide-react';
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+  const [storeType, setStoreType] = useState('');
+  const [neighborhood, setNeighborhood] = useState('');
+  const [distance, setDistance] = useState('');
+
+  function handleSearch(e: FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (query) params.set('q', query);
+    if (storeType) params.set('type', storeType);
+    if (neighborhood) params.set('neighborhood', neighborhood);
+    if (distance) params.set('distance', distance);
+    navigate(`/search?${params.toString()}`);
+  }
+
   return (
-    <main className="relative overflow-hidden">
-      {/* Ambient background gradients */}
+    <main className="relative min-h-screen overflow-hidden bg-[#050810]">
+      {/* Ambient glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-48 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-primary/[0.07] blur-[120px]" />
-        <div className="absolute top-96 -right-48 h-[400px] w-[400px] rounded-full bg-cyan-500/[0.05] blur-[100px]" />
-        <div className="absolute top-[800px] -left-32 h-[300px] w-[300px] rounded-full bg-accent/[0.04] blur-[80px]" />
+        <div className="absolute top-1/4 left-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.06] blur-[150px]" />
+        <div className="absolute bottom-0 left-1/2 h-[300px] w-full -translate-x-1/2 bg-gradient-to-t from-primary/[0.03] to-transparent" />
       </div>
 
-      {/* Hero */}
-      <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 pt-24 pb-12 text-center">
+      {/* Hero Section */}
+      <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 pt-24 pb-48 text-center">
         {/* Badge */}
-        <div className="fade-in-up mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-sm font-medium text-primary-light">
+        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/[0.08] px-4 py-1.5 text-sm font-medium text-primary-light">
           <Sparkles size={14} />
-          <span>Hackathon 2026 Project</span>
+          <span>AI-Powered Local Discovery</span>
         </div>
 
-        <h1
-          className="fade-in-up max-w-4xl text-5xl leading-[1.1] font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
-          style={{ animationDelay: '100ms' }}
-        >
-          Discover What{' '}
-          <span className="bg-gradient-to-r from-primary via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-            Google Can't Find
-          </span>
+        {/* Heading */}
+        <h1 className="max-w-4xl text-5xl leading-[1.08] font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
+          Find What the{' '}
+          <span className="text-primary-light">Map</span>
+          {' '}Won&apos;t Show You
         </h1>
 
-        <p
-          className="fade-in-up mt-6 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl"
-          style={{ animationDelay: '200ms' }}
-        >
-          Millions of real businesses are invisible online -- no Google listing,
-          no website, no digital footprint. StreetTrade uses Street View AI to
-          find them.
+        {/* Subtitle */}
+        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-400 sm:text-xl">
+          Uncover hidden gems, forgotten archives, and local secrets — powered
+          by street-level AI that sees what others miss.
         </p>
 
-        <div
-          className="fade-in-up mt-10 flex flex-col items-center gap-4 sm:flex-row"
-          style={{ animationDelay: '300ms' }}
+        {/* Search Bar */}
+        <form
+          onSubmit={handleSearch}
+          className="mt-10 w-full max-w-2xl"
         >
-          <Link
-            to="/search"
-            className="group flex items-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-semibold text-gray-950 shadow-[0_0_30px_rgba(16,185,129,0.25)] transition-all hover:bg-primary-light hover:shadow-[0_0_40px_rgba(16,185,129,0.35)]"
-          >
-            Start Searching
-            <ArrowRight
-              size={18}
-              className="transition-transform group-hover:translate-x-0.5"
-            />
-          </Link>
-          <a
-            href="#how-it-works"
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-8 py-3.5 text-base font-semibold text-gray-300 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
-          >
-            Learn More
-          </a>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce text-gray-600">
-          <div className="h-8 w-5 rounded-full border-2 border-gray-600 p-1">
-            <div className="mx-auto h-2 w-1 rounded-full bg-gray-500" />
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <StatsBar />
-
-      {/* How It Works */}
-      <section id="how-it-works" className="relative px-4 py-24 sm:py-32">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              How It{' '}
-              <span className="bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent">
-                Works
-              </span>
-            </h2>
-            <p className="mt-4 text-lg text-gray-400">
-              Four steps from Street View to actionable business data.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((step, i) => (
-              <div
-                key={i}
-                className="fade-in-up group relative rounded-2xl border border-white/[0.06] bg-surface-light/40 p-6 transition-all duration-500 hover:border-primary/20 hover:bg-surface-light/70"
-                style={{ animationDelay: `${i * 120}ms` }}
-              >
-                {/* Step number */}
-                <span className="absolute top-4 right-4 text-xs font-bold text-white/10 select-none">
-                  0{i + 1}
-                </span>
-
-                {/* Connector line (not on last card) */}
-                {i < steps.length - 1 && (
-                  <div className="absolute top-1/2 -right-3 hidden h-px w-6 bg-gradient-to-r from-primary/30 to-transparent lg:block" />
-                )}
-
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/15 group-hover:shadow-[0_0_24px_rgba(16,185,129,0.15)]">
-                  {step.icon}
-                </div>
-
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  {step.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-gray-400">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="relative px-4 py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          {/* Glow behind card */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-64 w-96 rounded-full bg-primary/[0.08] blur-[100px]" />
-          </div>
-
-          <div className="relative rounded-3xl border border-white/[0.06] bg-surface-light/30 px-8 py-14 backdrop-blur-sm">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Ready to uncover hidden businesses?
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-gray-400">
-              Search any Canadian street address and see what businesses exist
-              in the real world but not on the internet.
-            </p>
-            <Link
-              to="/search"
-              className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-10 py-4 text-lg font-semibold text-gray-950 shadow-[0_0_30px_rgba(16,185,129,0.25)] transition-all hover:bg-primary-light hover:shadow-[0_0_40px_rgba(16,185,129,0.35)]"
-            >
-              Start Searching
-              <ArrowRight
-                size={20}
-                className="transition-transform group-hover:translate-x-0.5"
+          <div className="flex items-center rounded-xl bg-white shadow-lg shadow-black/20">
+            <div className="flex flex-1 items-center px-4">
+              <Search size={20} className="shrink-0 text-gray-400" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="dark academia vintage dresses within 2km..."
+                className="w-full bg-transparent px-3 py-4 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                aria-label="Search query"
               />
-            </Link>
+            </div>
+            <button
+              type="submit"
+              className="mr-1.5 flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-light"
+            >
+              <Search size={16} />
+              Search
+            </button>
           </div>
-        </div>
+
+          {/* Filter Dropdowns */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <FilterSelect
+              value={storeType}
+              onChange={setStoreType}
+              placeholder="Store type"
+              options={[
+                'Vintage',
+                'Bookstore',
+                'Cafe',
+                'Gallery',
+                'Thrift',
+                'Records',
+                'Antiques',
+              ]}
+            />
+            <FilterSelect
+              value={neighborhood}
+              onChange={setNeighborhood}
+              placeholder="Neighborhood"
+              options={[
+                'Downtown',
+                'Kensington',
+                'Queen West',
+                'Ossington',
+                'Parkdale',
+                'Junction',
+                'Leslieville',
+              ]}
+            />
+            <FilterSelect
+              value={distance}
+              onChange={setDistance}
+              placeholder="Within km"
+              options={['1 km', '2 km', '5 km', '10 km', '25 km']}
+            />
+          </div>
+        </form>
       </section>
+
+      {/* City Skyline Silhouette */}
+      <div className="pointer-events-none absolute right-0 bottom-0 left-0">
+        <svg
+          viewBox="0 0 1440 220"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0 220V180h40v-20h20v-30h10v30h30v-40h10v-10h20v10h10v40h20v-60h10v-20h20v20h10v60h30v-50h10v-30h20v30h10v50h20v-80h10v-10h10v-20h20v20h10v10h10v80h30v-100h10v-10h10v10h10v-30h20v30h10v100h20v-40h10v-60h10v-20h20v20h10v60h10v40h30v-70h10v-50h20v50h10v70h20v-30h10v-90h10v-30h20v30h10v90h10v30h30v-50h10v-20h20v20h10v-40h20v40h10v50h30v-60h10v-30h10v-10h20v10h10v30h10v60h20v-40h10v-80h20v80h10v40h30v-20h10v-30h20v30h10v20h20v-50h10v-10h10v10h10v-40h20v40h10v50h30v-30h10v-60h20v60h10v30h20v-20h10v-10h20v10h10v20h40V220z"
+            fill="#0a0e17"
+          />
+          <path
+            d="M0 220V190h40v-10h20v-20h10v20h30v-30h10v-5h20v5h10v30h20v-40h10v-15h20v15h10v40h30v-35h10v-20h20v20h10v35h20v-55h10v-5h10v-15h20v15h10v5h10v55h30v-70h10v-5h10v5h10v-20h20v20h10v70h20v-25h10v-40h10v-15h20v15h10v40h10v25h30v-45h10v-35h20v35h10v45h20v-20h10v-60h10v-20h20v20h10v60h10v20h30v-30h10v-10h20v10h10v-25h20v25h10v30h30v-40h10v-20h10v-5h20v5h10v20h10v40h20v-25h10v-55h20v55h10v25h30v-10h10v-20h20v20h10v10h20v-35h10v-5h10v5h10v-25h20v25h10v35h30v-15h10v-40h20v40h10v15h20v-10h10v-5h20v5h10v10h40V220z"
+            fill="#080c14"
+          />
+          {/* Building window lights */}
+          <g fill="#e88c0a" opacity="0.15">
+            <rect x="95" y="170" width="3" height="4" rx="0.5" />
+            <rect x="105" y="165" width="3" height="4" rx="0.5" />
+            <rect x="175" y="150" width="3" height="4" rx="0.5" />
+            <rect x="255" y="140" width="3" height="4" rx="0.5" />
+            <rect x="345" y="135" width="3" height="4" rx="0.5" />
+            <rect x="435" y="125" width="3" height="4" rx="0.5" />
+            <rect x="445" y="135" width="3" height="4" rx="0.5" />
+            <rect x="535" y="120" width="3" height="4" rx="0.5" />
+            <rect x="625" y="145" width="3" height="4" rx="0.5" />
+            <rect x="715" y="130" width="3" height="4" rx="0.5" />
+            <rect x="805" y="140" width="3" height="4" rx="0.5" />
+            <rect x="895" y="155" width="3" height="4" rx="0.5" />
+            <rect x="985" y="135" width="3" height="4" rx="0.5" />
+            <rect x="1075" y="150" width="3" height="4" rx="0.5" />
+            <rect x="1165" y="145" width="3" height="4" rx="0.5" />
+            <rect x="1255" y="160" width="3" height="4" rx="0.5" />
+            <rect x="1345" y="150" width="3" height="4" rx="0.5" />
+          </g>
+          <g fill="#e88c0a" opacity="0.08">
+            <rect x="100" y="178" width="3" height="4" rx="0.5" />
+            <rect x="180" y="158" width="3" height="4" rx="0.5" />
+            <rect x="260" y="148" width="3" height="4" rx="0.5" />
+            <rect x="350" y="142" width="3" height="4" rx="0.5" />
+            <rect x="440" y="132" width="3" height="4" rx="0.5" />
+            <rect x="540" y="128" width="3" height="4" rx="0.5" />
+            <rect x="630" y="152" width="3" height="4" rx="0.5" />
+            <rect x="720" y="138" width="3" height="4" rx="0.5" />
+            <rect x="810" y="148" width="3" height="4" rx="0.5" />
+            <rect x="900" y="162" width="3" height="4" rx="0.5" />
+            <rect x="990" y="142" width="3" height="4" rx="0.5" />
+            <rect x="1080" y="158" width="3" height="4" rx="0.5" />
+            <rect x="1170" y="152" width="3" height="4" rx="0.5" />
+            <rect x="1260" y="168" width="3" height="4" rx="0.5" />
+          </g>
+        </svg>
+      </div>
     </main>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Small filter select component                                       */
+/* ------------------------------------------------------------------ */
+
+function FilterSelect({
+  value,
+  onChange,
+  placeholder,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  options: string[];
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="appearance-none rounded-lg border border-surface-border bg-surface-light py-2 pr-8 pl-3 text-sm text-gray-300 transition-colors hover:border-primary/30 focus:border-primary/50 focus:outline-none"
+        aria-label={placeholder}
+      >
+        <option value="">{placeholder}</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        size={14}
+        className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-gray-500"
+      />
+    </div>
   );
 }

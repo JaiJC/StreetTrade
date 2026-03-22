@@ -54,7 +54,7 @@ function ScanLine() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <div
-        className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_12px_2px_rgba(16,185,129,0.6)]"
+        className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_12px_2px_rgba(232,140,10,0.6)]"
         style={{
           animation: 'scanDown 2s ease-in-out infinite',
         }}
@@ -328,7 +328,7 @@ function FinalResultCard({ visible }: { visible: boolean }) {
         </div>
         <div className="mt-4 pt-4 border-t border-surface-lighter flex items-center justify-between">
           <span className="text-xs text-gray-500">
-            Discovered via StreetTrade AI Pipeline
+            Discovered via Hidden City AI Pipeline
           </span>
           <a
             href="#"
@@ -363,7 +363,7 @@ function TimelineStep({
           className={`
             w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 border-2
             ${status === 'complete' ? 'bg-primary border-primary text-white' : ''}
-            ${status === 'active' ? 'border-primary text-primary bg-primary/10 shadow-[0_0_16px_rgba(16,185,129,0.3)] animate-pulse' : ''}
+            ${status === 'active' ? 'border-primary text-primary bg-primary/10 shadow-[0_0_16px_rgba(232,140,10,0.3)] animate-pulse' : ''}
             ${status === 'pending' ? 'border-surface-lighter text-gray-600 bg-surface-light' : ''}
           `}
         >
@@ -376,9 +376,9 @@ function TimelineStep({
               style={{
                 background:
                   status === 'complete'
-                    ? 'linear-gradient(to bottom, #10b981, #10b981)'
+                    ? 'linear-gradient(to bottom, #e88c0a, #e88c0a)'
                     : status === 'active'
-                    ? 'linear-gradient(to bottom, #10b981, #374151)'
+                    ? 'linear-gradient(to bottom, #e88c0a, #374151)'
                     : '#374151',
               }}
             />
@@ -516,7 +516,7 @@ export default function DemoPage() {
           AI Detection Pipeline
         </p>
         <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
-          How StreetTrade Discovers{' '}
+          How Hidden City Discovers{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-light">
             Hidden Businesses
           </span>

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
-import type { Category } from '../data/types';
 import { mockBusinesses, categories } from '../data/mockBusinesses';
 
 interface SearchBarProps {
@@ -33,7 +32,6 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
 
     const results: Suggestion[] = [];
 
-    // Business matches (max 5)
     const bizMatches = mockBusinesses
       .filter((b) => b.name.toLowerCase().includes(trimmed))
       .slice(0, 5)
@@ -46,7 +44,6 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
       }));
     results.push(...bizMatches);
 
-    // Category matches (max 2)
     const catMatches = categories
       .filter((c) => c.value !== 'all' && c.label.toLowerCase().includes(trimmed))
       .slice(0, 2)
@@ -58,7 +55,6 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
       }));
     results.push(...catMatches);
 
-    // Tag matches (max 1)
     const allTags = new Set(mockBusinesses.flatMap((b) => b.tags));
     const tagMatch = [...allTags].find((t) => t.toLowerCase().includes(trimmed));
     if (tagMatch) {
@@ -78,7 +74,7 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
         setQuery(suggestion.label);
         onSelectBusiness?.(suggestion.id);
       } else {
-        const searchTerm = suggestion.type === 'category' ? suggestion.id : suggestion.id;
+        const searchTerm = suggestion.id;
         setQuery('');
         onSearch(searchTerm);
       }
@@ -152,7 +148,6 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
     onSearch('');
   };
 
-  // Click outside to close
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -163,7 +158,6 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Cleanup blur timeout
   useEffect(() => {
     return () => {
       if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
@@ -173,7 +167,7 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
   return (
     <div ref={containerRef} className="relative w-full">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
         <input
           ref={inputRef}
           type="text"
@@ -183,7 +177,7 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder="Search hidden businesses near you..."
-          className="w-full pl-12 pr-12 py-3.5 bg-surface-light border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-lg shadow-black/20 transition-all text-sm"
+          className="w-full pl-12 pr-12 py-3.5 bg-[#0f1724] border border-[#1e2a3a] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#e88c0a] focus:ring-2 focus:ring-[#e88c0a]/20 transition-all text-sm"
           role="combobox"
           aria-expanded={showDropdown}
           aria-autocomplete="list"
@@ -204,7 +198,7 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
 
       {showDropdown && suggestions.length > 0 && (
         <ul
-          className="absolute z-50 w-full mt-1.5 bg-surface-light border border-surface-lighter rounded-xl shadow-2xl shadow-black/40 overflow-hidden py-1"
+          className="absolute z-50 w-full mt-1.5 bg-[#0f1724] border border-[#1e2a3a] rounded-xl shadow-2xl shadow-black/40 overflow-hidden py-1"
           role="listbox"
         >
           {suggestions.map((suggestion, index) => (
@@ -215,8 +209,8 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
               aria-selected={highlightedIndex === index}
               className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors text-sm ${
                 highlightedIndex === index
-                  ? 'bg-surface-lighter'
-                  : 'hover:bg-surface-lighter'
+                  ? 'bg-[#1a2332]'
+                  : 'hover:bg-[#1a2332]'
               }`}
               onMouseDown={(e) => {
                 e.preventDefault();
@@ -228,7 +222,7 @@ export default function SearchBar({ onSearch, onSelectBusiness }: SearchBarProps
                 <>
                   <span
                     className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                      suggestion.exclusive ? 'bg-primary' : 'bg-gray-500'
+                      suggestion.exclusive ? 'bg-[#e88c0a]' : 'bg-gray-500'
                     }`}
                   />
                   <span className="text-white truncate">{suggestion.label}</span>

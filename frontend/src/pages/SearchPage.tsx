@@ -15,7 +15,7 @@ export default function SearchPage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<Category>('all');
-  const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  const [sortBy, setSortBy] = useState<SortOption>('confidence');
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
   const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceFilter>('all');
   const [exclusiveOnly, setExclusiveOnly] = useState(false);
@@ -26,10 +26,8 @@ export default function SearchPage() {
   // Filter and sort businesses
   const filtered = useMemo(() => {
     let results = mockBusinesses.filter((biz) => {
-      // Category filter
       if (category !== 'all' && biz.category !== category) return false;
 
-      // Text search
       if (query.trim()) {
         const q = query.toLowerCase();
         const matchesQuery =
@@ -40,20 +38,16 @@ export default function SearchPage() {
         if (!matchesQuery) return false;
       }
 
-      // Source filter
       if (sourceFilter !== 'all' && biz.source !== sourceFilter) return false;
 
-      // Confidence filter
       if (confidenceFilter === '80' && biz.confidence < 0.8) return false;
       if (confidenceFilter === '90' && biz.confidence < 0.9) return false;
 
-      // Exclusive only
       if (exclusiveOnly && biz.onGoogle) return false;
 
       return true;
     });
 
-    // Sort
     if (sortBy === 'confidence') {
       results = [...results].sort((a, b) => b.confidence - a.confidence);
     } else if (sortBy === 'name') {
@@ -63,7 +57,6 @@ export default function SearchPage() {
     return results;
   }, [query, category, sortBy, sourceFilter, confidenceFilter, exclusiveOnly]);
 
-  // Stats
   const googleCount = filtered.filter((b) => b.onGoogle).length;
   const exclusiveCount = filtered.filter((b) => !b.onGoogle).length;
   const totalCount = filtered.length;
@@ -87,7 +80,6 @@ export default function SearchPage() {
     }
   }, []);
 
-  // Scroll selected card into view
   useEffect(() => {
     if (selectedId && listRef.current) {
       const card = listRef.current.querySelector(`[data-biz-id="${selectedId}"]`);
@@ -96,12 +88,10 @@ export default function SearchPage() {
   }, [selectedId]);
 
   return (
-    <div className="min-h-screen bg-surface text-white flex flex-col">
+    <div className="min-h-screen bg-[#0a0e17] text-white flex flex-col">
       {/* Search bar */}
-      <header className="border-b border-surface-lighter px-4 py-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <SearchBar onSearch={handleSearch} onSelectBusiness={handleSelectBusiness} />
-        </div>
+      <header className="bg-[#0a0e17] border-b border-[#1e2a3a] px-4 py-4">
+        <SearchBar onSearch={handleSearch} onSelectBusiness={handleSelectBusiness} />
       </header>
 
       {/* Filter bar */}
@@ -119,15 +109,27 @@ export default function SearchPage() {
         resultCount={totalCount}
         exclusiveCount={exclusiveCount}
         googleCount={googleCount}
+        query={query || undefined}
       />
 
       {/* Main content: list + map */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 280px)' }}>
-        {/* Business list */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
+        {/* Business list - 60% */}
         <div
           ref={listRef}
-          className="md:w-[420px] lg:w-[480px] xl:w-[520px] shrink-0 overflow-y-auto border-r border-surface-lighter p-4 space-y-3 max-h-[50vh] md:max-h-full"
+          className="w-full md:w-[60%] shrink-0 overflow-y-auto border-r border-[#1e2a3a] p-4 space-y-3 max-h-[50vh] md:max-h-full"
         >
+          {/* Results header */}
+          {query && (
+            <div className="pb-2">
+              <h2 className="text-sm text-gray-400">
+                <span className="text-white font-semibold">{totalCount} results</span>
+                {' for '}
+                <span className="text-[#e88c0a] font-medium">'{query}'</span>
+              </h2>
+            </div>
+          )}
+
           {filtered.length === 0 ? (
             <div className="text-center py-16 text-gray-500">
               <MapPin className="w-10 h-10 mx-auto mb-3 opacity-40" />
@@ -147,7 +149,7 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Map */}
+        {/* Map - 40% */}
         <div className="flex-1 min-h-[300px]">
           <MapView
             businesses={filtered}

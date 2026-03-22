@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-gray-950">
         <Navbar />
-        <main className="pt-16">
+        <main className="pt-14">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/search" element={<SearchPage />} />
