@@ -1,0 +1,60 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Drive Fresh Produce",
+        "address": "1556 Commercial Dr, Vancouver, BC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.0697, 49.2681]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Lotus Thai Noodle House",
+        "address": "1432 Commercial Dr, Vancouver, BC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.0689, 49.2667]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Templeton Noodle Bar",
+        "address": "1860 E Hastings St, Vancouver, BC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.0734, 49.2652]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mosaic Auto Repair",
+        "address": "2388 E Hastings St, Vancouver, BC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.078, 49.2618]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Hastings Tire Clinic",
+        "address": "2166 E Hastings St, Vancouver, BC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-123.0751, 49.2624]
+      }
+    }
+  ]
+}
