@@ -79,7 +79,7 @@ class EvidenceSource(Base):
         nullable=False,
     )
     type: Mapped[EvidenceType] = mapped_column(
-        Enum(EvidenceType, name="evidence_type_enum"), nullable=False
+        Enum(EvidenceType, name="evidence_type_enum", values_callable=lambda e: [x.value for x in e]), nullable=False
     )
     raw_reference: Mapped[str] = mapped_column(Text, nullable=False)
     features: Mapped[dict | None] = mapped_column(JSONB)

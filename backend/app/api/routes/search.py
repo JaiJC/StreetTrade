@@ -128,7 +128,7 @@ async def search(req: SearchRequest, db: DB, embedder: Embedder) -> SearchRespon
         longitude=req.longitude,
         radius_km=req.radius_km,
         limit=req.limit,
-        query_embedding=str(query_embedding),
+        query_embedding=query_embedding,
         top_results={
             "ids": [str(r.business_id) for r in results[:10]],
             "scores": [r.hybrid_score for r in results[:10]],

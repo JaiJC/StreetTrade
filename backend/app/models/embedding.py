@@ -29,7 +29,7 @@ class BusinessEmbedding(Base):
         nullable=False,
     )
     embedding_type: Mapped[EmbeddingType] = mapped_column(
-        Enum(EmbeddingType, name="embedding_type_enum"), nullable=False
+        Enum(EmbeddingType, name="embedding_type_enum", values_callable=lambda e: [x.value for x in e]), nullable=False
     )
     embedding = mapped_column(Vector(settings.embedding_dimensions), nullable=False)
 

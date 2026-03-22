@@ -50,12 +50,30 @@ class CLIPEmbeddingService:
 
     # --- sync internals (run in thread pool) ---
 
+    @staticmethod
+    def _to_tensor(output: object) -> torch.Tensor:
+        """Extract tensor from model output (handles both old and new transformers)."""
+        if isinstance(output, torch.Tensor):
+            return output
+        # transformers >= 5.x returns BaseModelOutputWithPooling
+        if hasattr(output, 'text_embeds'):
+            return output.text_embeds
+        if hasattr(output, 'image_embeds'):
+            return output.image_embeds
+        # Generic fallback
+        if hasattr(output, 'pooler_output'):
+            return output.pooler_output
+        if hasattr(output, 'last_hidden_state'):
+            return output.last_hidden_state[:, 0]
+        raise TypeError(f"Unexpected model output type: {type(output)}")
+
     def _embed_text_sync(self, text: str) -> list[float]:
         inputs = self._tokenizer(
             [text], return_tensors="pt", padding=True, truncation=True, max_length=77
         )
         with torch.no_grad():
-            features = self._model.get_text_features(**inputs)
+            raw = self._model.get_text_features(**inputs)
+        features = self._to_tensor(raw)
         features = features / features.norm(dim=-1, keepdim=True)
         return features[0].tolist()
 
@@ -64,21 +82,24 @@ class CLIPEmbeddingService:
             texts, return_tensors="pt", padding=True, truncation=True, max_length=77
         )
         with torch.no_grad():
-            features = self._model.get_text_features(**inputs)
+            raw = self._model.get_text_features(**inputs)
+        features = self._to_tensor(raw)
         features = features / features.norm(dim=-1, keepdim=True)
         return features.tolist()
 
     def _embed_image_sync(self, image: Image.Image) -> list[float]:
         inputs = self._processor(images=[image], return_tensors="pt")
         with torch.no_grad():
-            features = self._model.get_image_features(**inputs)
+            raw = self._model.get_image_features(**inputs)
+        features = self._to_tensor(raw)
         features = features / features.norm(dim=-1, keepdim=True)
         return features[0].tolist()
 
     def _embed_images_sync(self, images: list[Image.Image]) -> list[list[float]]:
         inputs = self._processor(images=images, return_tensors="pt")
         with torch.no_grad():
-            features = self._model.get_image_features(**inputs)
+            raw = self._model.get_image_features(**inputs)
+        features = self._to_tensor(raw)
         features = features / features.norm(dim=-1, keepdim=True)
         return features.tolist()
 
@@ -91,8 +112,8 @@ class CLIPEmbeddingService:
         )
         image_inputs = self._processor(images=[image], return_tensors="pt")
         with torch.no_grad():
-            text_features = self._model.get_text_features(**text_inputs)
-            image_features = self._model.get_image_features(**image_inputs)
+            text_features = self._to_tensor(self._model.get_text_features(**text_inputs))
+            image_features = self._to_tensor(self._model.get_image_features(**image_inputs))
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
         image_features = image_features / image_features.norm(dim=-1, keepdim=True)
         similarity = (image_features @ text_features.T).softmax(dim=-1)

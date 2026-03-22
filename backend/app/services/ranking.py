@@ -26,9 +26,9 @@ SELECT
         ll_to_earth(b.latitude, b.longitude),
         ll_to_earth(:lat, :lng)
     ) AS distance_m,
-    1 - (be.embedding <=> :query_embedding::vector) AS similarity,
+    1 - (be.embedding <=> CAST(:query_embedding AS vector)) AS similarity,
     (
-        :w_sim  * (1 - (be.embedding <=> :query_embedding::vector))
+        :w_sim  * (1 - (be.embedding <=> CAST(:query_embedding AS vector)))
       + :w_dist * (1 - LEAST(
             earth_distance(
                 ll_to_earth(b.latitude, b.longitude),
