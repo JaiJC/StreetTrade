@@ -117,14 +117,13 @@ export default function SearchPage() {
         query={query || undefined}
       />
 
-      {/* Main content: list + map */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
-        {/* Business list - 60% */}
+      {/* Main content: list + map — desktop only layout */}
+      <div className="flex-1 flex flex-row overflow-hidden" style={{ height: 'calc(100vh - 180px)' }}>
+        {/* Business list — 45% */}
         <div
           ref={listRef}
-          className="w-full md:w-[60%] shrink-0 overflow-y-auto border-r border-[#1e2a3a] p-4 space-y-3 max-h-[50vh] md:max-h-full"
+          className="w-[45%] shrink-0 overflow-y-auto border-r border-[#1e2a3a] p-4 space-y-3"
         >
-          {/* Results header */}
           {query && (
             <div className="pb-2">
               <h2 className="text-sm text-gray-400">
@@ -154,8 +153,8 @@ export default function SearchPage() {
           )}
         </div>
 
-        {/* Map - 40% */}
-        <div className="flex-1 min-h-[300px]">
+        {/* Map — 55% */}
+        <div className="flex-1">
           <MapView
             businesses={filtered}
             selectedId={selectedId}
