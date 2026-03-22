@@ -1,0 +1,37 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: streettrade
+      POSTGRES_PASSWORD: streettrade
+      POSTGRES_DB: streettrade
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streettrade"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      ST_DATABASE_URL: "postgresql+asyncpg://streettrade:streettrade@db:5432/streettrade"
+      ST_DATABASE_URL_SYNC: "postgresql+psycopg2://streettrade:streettrade@db:5432/streettrade"
+      ST_GOOGLE_MAPS_API_KEY: "${GOOGLE_MAPS_API_KEY:-}"
+      ST_REDDIT_CLIENT_ID: "${REDDIT_CLIENT_ID:-}"
+      ST_REDDIT_CLIENT_SECRET: "${REDDIT_CLIENT_SECRET:-}"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+volumes:
+  pgdata:

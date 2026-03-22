@@ -1,4 +1,21 @@
+<<<<<<< HEAD
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
 sqlalchemy>=2.0
 pydantic>=2.0
+=======
+fastapi[standard]
+uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
+psycopg2-binary
+pgvector
+pydantic-settings
+torch
+transformers
+Pillow
+httpx
+numpy
+easyocr
+asyncpraw
+>>>>>>> b90150a (Added backend+ML pipeline)
