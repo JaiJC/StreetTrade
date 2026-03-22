@@ -23,6 +23,7 @@ const sourceTagStyles: Record<string, { bg: string; text: string; label: string;
   street_view: { bg: 'bg-teal-50', text: 'text-teal-600', label: 'Street View', emoji: '📷' },
   social_media: { bg: 'bg-pink-50', text: 'text-pink-600', label: 'Social', emoji: '📱' },
   both: { bg: 'bg-blue-50', text: 'text-blue-600', label: 'Registry', emoji: '📋' },
+  registry: { bg: 'bg-blue-50', text: 'text-blue-600', label: 'Registry', emoji: '📋' },
 };
 
 export default function BusinessCard({ business, isSelected, onClick }: BusinessCardProps) {
@@ -40,8 +41,11 @@ export default function BusinessCard({ business, isSelected, onClick }: Business
   const tags: { bg: string; text: string; label: string; emoji: string }[] = [];
   if (business.source === 'both') {
     tags.push(sourceTagStyles.street_view);
-    tags.push(sourceTagStyles.both);
+    tags.push(sourceTagStyles.registry);
     tags.push(sourceTagStyles.social_media);
+  } else if (business.source === 'street_view') {
+    // Show Registry badge — most data comes from city registry
+    tags.push(sourceTagStyles.registry);
   } else {
     tags.push(sourceTag);
   }

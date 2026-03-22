@@ -47,12 +47,32 @@ export default function MapView({
     setMap(m);
   }, []);
 
-  // Pan to center when center changes
+  // Fit bounds to show all businesses, or pan to selected
   useMemo(() => {
-    if (map) {
+    if (!map) return;
+    if (selectedId) {
+      // Pan to selected business
       map.panTo(mapCenter);
+      return;
     }
-  }, [map, mapCenter]);
+    // Auto-fit to show all business markers
+    if (businesses.length > 0) {
+      const bounds = new google.maps.LatLngBounds();
+      for (const biz of businesses) {
+        bounds.extend({ lat: biz.lat, lng: biz.lng });
+      }
+      map.fitBounds(bounds, 50);
+      // Don't zoom in too far if few results
+      const listener = google.maps.event.addListenerOnce(map, 'idle', () => {
+        const z = map.getZoom();
+        if (z && z > 16) map.setZoom(16);
+        google.maps.event.removeListener(listener);
+      });
+    } else {
+      map.panTo(mapCenter);
+      map.setZoom(13);
+    }
+  }, [map, businesses, selectedId, mapCenter]);
 
   if (!isLoaded) {
     return (
