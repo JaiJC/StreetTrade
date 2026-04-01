@@ -1,4 +1,4 @@
-# StreetTrade
+# HiddenCity
 
 **Discover what Google doesn't show you.**
 
